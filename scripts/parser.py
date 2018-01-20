@@ -42,7 +42,8 @@ def FindPhonics(word_tuples):
 
 #output in json
 def CreateTrainingData(word_tuples):
-    return json.dumps(list({'word': word_tuple.text, 'POS': word_tuple.part_of_speech, 'suffix': word_tuple.phonics, 'syllable': word_tuple.syllables} for word_tuple in word_tuples))
+    word_tuple_list = list([word_tuple.text, word_tuple.part_of_speech, word_tuple.phonics, word_tuple.syllables] for word_tuple in word_tuples)
+    return json.dumps(word_tuple_list)
 
 #write to disk
 def WriteJsonToDisk(data):
@@ -57,7 +58,8 @@ with open("../data/sonnets.qtr") as f:
             word_tuples = FindPartOfSpeech(line, nlp)
             CountSyllables(word_tuples)
             FindPhonics(word_tuples)
-            data += CreateTrainingData(word_tuples) + ","
-    data = data[:-1]
+            data += CreateTrainingData(word_tuples) + "\n"
+        else:
+            data += "\n"
     WriteJsonToDisk(data)
 
