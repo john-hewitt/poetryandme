@@ -38,6 +38,7 @@ class RNNLM:
     self.b = self.pc.add_parameters((len(self.word_vocab)))
 
   def initialize(self):
+    self.states_so_far = []
     return self.rnn.initial_state()
 
   def get_concatenated_representation(self, token):
@@ -55,14 +56,15 @@ class RNNLM:
       syll_count = 0
       string_so_far = ''
       toks_so_far = []
-      while last_tok != EOQ_TOK and len(toks_so_far) < 15:
-        token = [self.word_vocab[last_tok], self.pos_vocab[last_tok], self.suffix_vocab[last_tok], syll_count]
+      token = [self.word_vocab[last_tok], self.pos_vocab[last_tok], self.suffix_vocab[last_tok], syll_count]
+      while last_tok != EOQ_TOK and len(toks_so_far) < 3*15 :
+        token = [self.word_vocab[last_tok], self.pos_vocab[last_pos], self.suffix_vocab[last_suffix], syll_count]
 
         state, probs = self.add_input(state, token)
         probs = probs.value()
         next_word_tok = self.word_vocab[probs.index(max(probs))]
 
-        string_so_far += next_word_tok + ' '
+        string_so_far += next_word_tok + ' ' if next_word_tok != 'EOS' else '\n'
         parsed_string = nlp(string_so_far)
         toks_so_far.append(next_word_tok)
         last_tok = next_word_tok
@@ -112,7 +114,8 @@ class RNNLMTrainer:
         quatrain = self.symbol_augment_quatrain(
             json.loads(line.strip()), quatrain_index)
         quatrains.append(quatrain)
-        quatrain_index = quatrain_index +1 if quatrain_index < 3 else 0
+        quatrain_index+= 1
+        quatrain_index = quatrain_index  if quatrain_index < 4 else 0
         print(quatrain)
     return quatrains
 
@@ -124,7 +127,7 @@ class RNNLMTrainer:
       for word, pos, suffix, num_syll in quatrain:
         integerized_tokens.append((word_vocab[word], pos_vocab[pos], suffix_vocab[suffix], num_syll))
       integerized_quatrains.append(integerized_tokens)
-      print(integerized_tokens)
+      #print(integerized_tokens)
     return integerized_quatrains
 
   def train(self, rnnlm, quatrains):
@@ -133,9 +136,9 @@ class RNNLMTrainer:
       losses = []
       tqdm.write('Epoch {}'.format(i))
       total_loss = 0
-      rnnlm.generate(rnnlm.initialize())
+      state = rnnlm.initialize()
       for count, quatrain in enumerate(quatrains):
-        state = rnnlm.initialize()
+        #print(count, quatrain[0])
         for token, (next_word, _, _, _) in zip(quatrain, quatrain[1:]):
           state, probs = rnnlm.add_input(state, token)
           loss = -dy.log(dy.pick(probs, next_word))
@@ -145,9 +148,14 @@ class RNNLMTrainer:
           total_loss += loss.value()
           loss.backward()
           self.trainer.update()
-          dy.renew_cg()
           losses = []
+          #dy.renew_cg()
+          #state = rnnlm.initialize()
+        if (count + 1)% 4 == 0:
+          dy.renew_cg()
+          state = rnnlm.initialize()
       tqdm.write('Training Loss: {}'.format(total_loss))
+      rnnlm.generate(rnnlm.initialize())
       if total_loss < min_loss:
         min_loss = total_loss
 
