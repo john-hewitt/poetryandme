@@ -1,3 +1,5 @@
+import json
+
 FIRST_TOK = '__FIRST'
 SECOND_TOK = '__SECOND'
 THIRD_TOK = '__THIRD'
@@ -16,13 +18,40 @@ class Vocab:
     self.add(FOURTH_TOK)
     self.add(UNK_TOK)
 
+  @staticmethod
+  def vocabs_from_file(filepath):
+    word_data, pos_data, suffix_data = json.load(open(filepath))
+    word_vocab = Vocab()
+    word_vocab.sym_to_int, word_vocab.int_to_sym = word_data
+    word_vocab.int_to_sym = {int(c):word_vocab.int_to_sym[c] for c in word_vocab.int_to_sym}
+    pos_vocab = Vocab()
+    pos_vocab.sym_to_int, pos_vocab.int_to_sym = pos_data
+    pos_vocab.int_to_sym = {int(c):pos_vocab.int_to_sym[c] for c in pos_vocab.int_to_sym}
+    suffix_vocab = Vocab()
+    suffix_vocab.sym_to_int, suffix_vocab.int_to_sym = suffix_data
+    suffix_vocab.int_to_sym = {int(c):suffix_vocab.int_to_sym[c] for c in suffix_vocab.int_to_sym}
+    return word_vocab, pos_vocab, suffix_vocab
+
+  @staticmethod
+  def vocabs_to_file(vocabs, filepath):
+    word_vocab, pos_vocab, suffix_vocab = vocabs
+    print(word_vocab.int_to_sym)
+    json.dump(
+        [[word_vocab.sym_to_int, word_vocab.int_to_sym],
+          [pos_vocab.sym_to_int, pos_vocab.int_to_sym],
+          [suffix_vocab.sym_to_int, suffix_vocab.int_to_sym]
+        ], open(filepath, 'w'))
+
+
   def __getitem__(self, obj):
+    if isinstance(obj, str):
+      obj = obj.lower()
     if obj in self.sym_to_int:
       return self.sym_to_int[obj]
     elif obj in self.int_to_sym:
       return self.int_to_sym[obj]
     elif isinstance(obj, str):
-      return self.sym_to_int[UNK_TOK]
+      return self.sym_to_int[UNK_TOK.lower()]
     else:
       raise Exception("Int not found")
 
@@ -33,6 +62,7 @@ class Vocab:
     return len(self.sym_to_int)
 
   def add(self, obj):
+    obj = obj.lower()
     if obj not in self.sym_to_int:
       successor = len(self.sym_to_int)
       self.sym_to_int[obj] = successor
