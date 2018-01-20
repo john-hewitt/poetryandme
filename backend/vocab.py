@@ -44,12 +44,14 @@ class Vocab:
 
 
   def __getitem__(self, obj):
+    if isinstance(obj, str):
+      obj = obj.lower()
     if obj in self.sym_to_int:
       return self.sym_to_int[obj]
     elif obj in self.int_to_sym:
       return self.int_to_sym[obj]
     elif isinstance(obj, str):
-      return self.sym_to_int[UNK_TOK]
+      return self.sym_to_int[UNK_TOK.lower()]
     else:
       raise Exception("Int not found")
 
@@ -60,6 +62,7 @@ class Vocab:
     return len(self.sym_to_int)
 
   def add(self, obj):
+    obj = obj.lower()
     if obj not in self.sym_to_int:
       successor = len(self.sym_to_int)
       self.sym_to_int[obj] = successor

@@ -67,7 +67,7 @@ class RNNLM:
         probs = probs.value()
         next_word_tok = self.word_vocab[probs.index(max(probs))]
 
-        string_so_far += next_word_tok + ' ' if next_word_tok != 'EOS' else '\n'
+        string_so_far += next_word_tok + ' ' if next_word_tok != 'eos' else '\n'
         parsed_string = nlp(string_so_far)
         toks_so_far.append(next_word_tok)
         last_tok = next_word_tok
