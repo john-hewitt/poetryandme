@@ -32,7 +32,10 @@ def FindPartOfSpeech(text, nlp):
 def CountSyllables(word_tuples):
     for word_tuple in word_tuples:
         if word_tuple.text != 'EOS':
-            word_tuple.syllables = syllables.count_syllables(word_tuple.text)
+            if word_tuple.text.isalpha():
+                word_tuple.syllables = syllables.count_syllables(word_tuple.text)
+            else:
+                word_tuple.syllables = 0
 
 #find the ipa
 def FindPhonics(word_tuples):
