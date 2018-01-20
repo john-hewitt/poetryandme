@@ -1,5 +1,13 @@
 from flask import Flask, request, render_template, jsonify
+import spacy
+import sys
+
+sys.path.append("../scripts")
+from syllables import count_syllables
+
 app = Flask(__name__)
+
+nlp = spacy.load('en')
 
 app.config['DEBUG'] = True
 
@@ -15,4 +23,10 @@ def get_suggestions():
 
 # this will be the backend call
 def getSuggestions(word):
+	tokens = nlp(word);
+	token = tokens[0].text;
+	pos_tag = tokens[0].pos_;
+	suffix = token[-2:];
+	num_syllables = count_syllables(token);
+
 	return ['suggestion1', 'suggestion2', 'suggestion3']
