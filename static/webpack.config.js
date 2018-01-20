@@ -14,10 +14,13 @@ const config = {
               test: /\.jsx?/,
               exclude: /node_modules/,
               use: 'babel-loader',
-              //loader: 'babel',
-              /*query: {
-                presets: ['react']
-              }*/
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader",
+                    "css-loader"
+                    ]
             }
         ]
         // loaders: [
