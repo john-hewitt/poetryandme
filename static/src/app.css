@@ -5,7 +5,7 @@
 }
 
 h1{
-	border: 1px solid blue;
+	/*border: 1px solid blue;*/
 	width: 100%;
 }
 
@@ -36,4 +36,9 @@ h1{
 	border-bottom: 1px solid #efb326;
 	padding: none;
 	margin: none;
+}
+
+.suggestionContainer{
+	display: flex;
+	flex-wrap: wrap;
 }

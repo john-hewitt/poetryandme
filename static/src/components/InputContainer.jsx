@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import InputRow from "./InputRow.jsx";
 import CompleteRow from "./CompleteRow.jsx";
 
-import { Card, CardText, CardTitle } from 'react-md';
+const uuidv1 = require('uuid/v1');
 
 export default class InputContainer extends React.Component {
 
@@ -23,7 +23,7 @@ export default class InputContainer extends React.Component {
     handleInput(e){
         if(e.key == "Enter"){
             this.setState({
-                children: this.state.children.concat([<CompleteRow text={this.state.currentLine}/>]),
+                children: this.state.children.concat([<CompleteRow key={uuidv1()} text={this.state.currentLine}/>]),
                 currentWord: "",
                 currentLine: ""
             });
@@ -43,15 +43,10 @@ export default class InputContainer extends React.Component {
 
     render(){
         return(
-            <Card className="md-block-centered" raise={true} >
-            <CardTitle title="hello world"></CardTitle>
-            <div className="inputContainer">
-                <CardText>
+                <div className="inputContainer">
                     {this.state.children}
-                </CardText>
-                <InputRow handleInput={this.handleInput.bind(this)} currentLine={this.state.currentLine}/>
-            </div>
-            </Card>
+                    <InputRow handleInput={this.handleInput.bind(this)} currentLine={this.state.currentLine}/>
+                </div>
         )
     }
 }

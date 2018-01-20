@@ -7,7 +7,7 @@ from syllables import count_syllables
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
-nlp = spacy.load('en')
+# nlp = spacy.load('en')
 
 app.config['DEBUG'] = True
 
@@ -23,10 +23,10 @@ def get_suggestions():
 
 # this will be the backend call
 def getSuggestions(word):
-	tokens = nlp(word);
-	token = tokens[0].text;
-	pos_tag = tokens[0].pos_;
-	suffix = token[-2:];
-	num_syllables = count_syllables(token);
+	# tokens = nlp(word);
+	# token = tokens[0].text;
+	# pos_tag = tokens[0].pos_;
+	# suffix = token[-2:];
+	# num_syllables = count_syllables(token);
 
-	return ['suggestion1', 'suggestion2', 'suggestion3']
+	return [word + '1', word + '2', word + '3']
