@@ -5,7 +5,7 @@ import sys
 sys.path.append("../scripts")
 from syllables import count_syllables
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
 nlp = spacy.load('en')
 

@@ -1,10 +1,13 @@
+import React from "react";
+import ReactDOM from "react-dom";
+
 class InputRow extends React.Component {
 	render(){
-		return(
+		return (
 			<div className="inputRow">
-				<input className="inputForm" onKeyPress={this.props.handleInput}/>
+				<input value={this.props.currentLine} className="inputForm" onKeyPress={this.props.handleInput}/>
 			</div>
-		)
+		);
 	}
 }
 
@@ -23,27 +26,42 @@ class InputContainer extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			children: []
+			children: [],
+			currentWord: "",
+			currentLine: ""
 		}
+	}
+
+	isLetter(char) {
+		return char.match(/[a-z]/i);
 	}
 
 	handleInput(e){
 		if(e.key == "Enter"){
-			console.log("new line");
 			this.setState({
-				children: this.state.children.concat([<CompleteRow text="child"/>])
+				children: this.state.children.concat([<CompleteRow text={this.state.currentLine}/>]),
+				currentWord: "",
+				currentLine: ""
 			});
-		} else if (e.key == " "){
-			this.props.getSuggestions("word")
+		} else if (e.key == " ") {
+			this.props.getSuggestions(this.state.currentWord);
+			this.setState({
+				currentLine: this.state.currentLine + e.key,
+				currentWord: ""
+			});
+		} else if (this.isLetter(e.key)) {
+			this.setState({
+				currentLine: this.state.currentLine + e.key,
+				currentWord: this.state.currentWord + e.key
+			});
 		}
 	}
 
 	render(){
-		console.log(this.props)
 		return(
 			<div className="inputContainer">
 				{this.state.children}
-				<InputRow handleInput={this.handleInput.bind(this)}/>
+				<InputRow handleInput={this.handleInput.bind(this)} currentLine={this.state.currentLine}/>
 			</div>
 		)
 	}

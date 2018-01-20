@@ -19,7 +19,7 @@ for line in lines:
       continue
     quatrains = [buffer[0:3],buffer[3:6], buffer[6:9], buffer[9:11]]
     for quatrain in quatrains:
-      quatrain_line = ' EOS '.join(quatrain)
+      quatrain_line = ' # '.join(quatrain)
       print(quatrain_line)
     buffer = []
   else:
