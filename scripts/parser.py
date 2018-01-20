@@ -1,9 +1,9 @@
 import spacy
+import json
 
 import syllables
 
 nlp = spacy.load('en_core_web_sm')
-epi = epitran.Epitran('eng-Latn')
 
 class WordTuple:
     def __init__(self, text = "", part_of_speech = "", syllables = 0, phonics = ""):
@@ -38,26 +38,26 @@ def CountSyllables(word_tuples):
 def FindPhonics(word_tuples):
     for word_tuple in word_tuples:
         if word_tuple.text != 'EOS':
-            print(epi.transliterate(word_tuple.text))
             word_tuple.phonics = word_tuple.text[-2:]
 
+#output in json
+def CreateTrainingData(word_tuples):
+    return json.dumps(list({'word': word_tuple.text, 'POS': word_tuple.part_of_speech, 'suffix': word_tuple.phonics, 'syllable': word_tuple.syllables} for word_tuple in word_tuples))
+
+#write to disk
+def WriteJsonToDisk(data):
+    with open("../data/training_data.json", "w") as f:
+        f.write(data)
+
 with open("../data/sonnets.qtr") as f:
-    sonnets = []
-    sonnet = []
+    data = ""
     for line in f.readlines():
         #check for new sonnet
-        if line[0] == '\n':
-            #count every word's syllables
-            CountSyllables(sonnet)
-
-            #find phonics
-            FindPhonics(sonnet)
-
-            #add sonnet and clear list
-            sonnets.append(list(sonnet))
-            sonnet.clear()
-        else:
-            sonnet.extend(FindPartOfSpeech(line, nlp))
-    print(sonnets)
-
+        if line[0] != '\n':
+            word_tuples = FindPartOfSpeech(line, nlp)
+            CountSyllables(word_tuples)
+            FindPhonics(word_tuples)
+            data += CreateTrainingData(word_tuples) + ","
+    data = data[:-1]
+    WriteJsonToDisk(data)
 
