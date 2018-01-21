@@ -26,6 +26,7 @@ class SonnetPredictor:
 
     self.quatrain_tokens = [FIRST_TOK, SECOND_TOK, THIRD_TOK, FOURTH_TOK]
 
+
   def load_RNNLM(self, param_path):
     pass
 
@@ -43,12 +44,10 @@ class SonnetPredictor:
           self.rnnlm.suffix_vocab[suff],
           syll]
 
-    print(self.state)
     self.state, probs = self.rnnlm.add_input(self.state, token)
     prob_values = probs.value()
     topks = numpy.argsort(prob_values)[-10:]
 
-    print([self.rnnlm.word_vocab[x] for x in topks])
     return [self.rnnlm.word_vocab[x] for x in topks]
 
   def new_poem(self):
@@ -64,7 +63,11 @@ class SonnetPredictor:
     self.quatrain_index = self.quatrain_index + 1 if self.quatrain_index < 3 else 0
 
   def delete_word(self):
+    # Delete two words from the RNNLM (one will be added back in by backend.)
     self.state = self.rnnlm.delete_word()
+    self.state = self.rnnlm.delete_word()
+
+    
 
 
 if __name__ == '__main__':
