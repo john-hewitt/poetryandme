@@ -18,8 +18,8 @@ export default class InputContainer extends React.Component {
         }
     }
 
-    isLetter(char) {
-        return char.length == 1 && char.match(/[a-z]/i);
+    isValidLetter(char) {
+        return char.length == 1 && char.match(/[a-z.,?!\"\'\[\]\{\}/]/i);
     }
 
     isNum(char) {
@@ -47,7 +47,7 @@ export default class InputContainer extends React.Component {
         } else if (this.isNum(e.key)) {
             if(parseInt(e.key) > 0 && parseInt(e.key) <= this.state.suggestions.length)
             this.chooseSuggestion({suggestion: this.state.suggestions[parseInt(e.key) - 1]})
-        } else if (this.isLetter(e.key)) {
+        } else if (this.isValidLetter(e.key)) {
             this.setState({
                 currentLine: this.state.currentLine + e.key,
                 currentWord: this.state.currentWord + e.key
