@@ -1,5 +1,5 @@
 import argparse
-from syllables import count_syllables
+from penn_syllables import count_syllables
 import dynet as dy
 from vocab import Vocab, FIRST_TOK, SECOND_TOK, THIRD_TOK, FOURTH_TOK, EOQ_TOK
 import sys

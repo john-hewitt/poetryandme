@@ -6,7 +6,7 @@ import numpy
 from vocab import Vocab
 import argparse
 import en_core_web_sm
-from syllables import count_syllables
+from penn_syllables import count_syllables
 nlp = en_core_web_sm.load()
 
 

@@ -5,7 +5,7 @@ import sys
 import pronouncing as p
 
 sys.path.append("../scripts")
-sys.path.append("../scripts/English_to_IPA'/src/")
+sys.path.append("../scripts/English_to_IPA/src/")
 from penn_syllables import count_syllables
 
 import conversion
