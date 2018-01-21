@@ -23,8 +23,7 @@ export default class SuggestionContainer extends React.Component {
 
 	render(){
 		var suggestions = this.props.suggestions.filter(suggestion => 
-			suggestion.indexOf(this.props.currentWord) == 0 &&
-			suggestion != "</quatrain>"
+			suggestion.indexOf(this.props.currentWord) == 0
 		);
 		return(
 			<div className="suggestionContainer">
@@ -40,7 +39,7 @@ export default class SuggestionContainer extends React.Component {
 	                    	<Avatar backgroundColor={blue500}>
 	                    		{index == 9 ? 0 : index + 1}
 	                    	</Avatar>
-	                    	{suggestion == "eos" ? "New line" : suggestion}
+	                    	{suggestion == "eos" || suggestion == "</quatrain>" ? "New line" : suggestion}
 	                    </Chip>
 	                  )
                 })}

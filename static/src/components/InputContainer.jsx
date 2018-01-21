@@ -86,8 +86,7 @@ export default class InputContainer extends React.Component {
             });
         } else if (this.isNum(e.key)) {
             var filteredSuggestions = this.state.suggestions.filter(
-                suggestion => suggestion.indexOf(this.state.currentWord) == 0 &&
-                    suggestion != "</quatrain>"
+                suggestion => suggestion.indexOf(this.state.currentWord) == 0
             )
             if (parseInt(e.key) > 0 && parseInt(e.key) <= filteredSuggestions.length) {
                 this.chooseSuggestion({suggestion: filteredSuggestions[parseInt(e.key) - 1]})
@@ -113,7 +112,7 @@ export default class InputContainer extends React.Component {
     }
 
     chooseSuggestion(suggestion){
-        if(suggestion["suggestion"] == "eos"){
+        if(suggestion["suggestion"] == "eos" || suggestion["suggestion"] == "</quatrain>"){
             this.handleInput({key: "Enter"});
         } else {
             this.getSuggestions(suggestion["suggestion"]);
