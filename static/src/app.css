@@ -1,39 +1,43 @@
 .app{
 	text-align: center;
-	padding: 20px 20%;
+	padding: 20px 15%;
 	font-family: 'Open Sans', sans-serif;
 }
 
 h1{
-	border: 1px solid blue;
 	width: 100%;
 }
 
 .inputContainer{
-	/*border: 1px solid red;*/
+	text-align: left;
 	width: 100%;
 	padding: 10px 0px;
 }
 
 .inputForm{
-	text-align: center;
 	width: calc(100% - 40px);
 	height: 1em;
-	/*height: 10em;*/
-	resize: none;
 	border: none;
-	/*border-bottom: 1px solid none;*/
 	border-bottom: 1px solid #ffe79b;
 	font-size: 16px;
-	line-height: 32px;
 	padding: 10px;
 }
 
 .inputForm:focus{
-	/*outline: 1px solid #efb326;*/
 	outline: none;
 	border: none;
 	border-bottom: 1px solid #efb326;
 	padding: none;
 	margin: none;
+}
+
+.completeRow {
+	font-size: 16px;
+	padding: 0px 10px;
+}
+
+.suggestionContainer{
+	margin: 10px auto;
+	display: flex;
+	flex-wrap: wrap;
 }
