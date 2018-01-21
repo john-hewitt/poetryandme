@@ -17,8 +17,8 @@ class SonnetPredictor:
     self.pc = dy.ParameterCollection()
 
     loader = RNNLMTrainer(self.pc)
-    vocabs = Vocab.vocabs_from_file(vocab_path)
-    self.rnnlm = RNNLM(vocabs, self.pc)
+    self.vocabs = Vocab.vocabs_from_file(vocab_path)
+    self.rnnlm = RNNLM(self.vocabs, self.pc)
 
     self.pc.populate(param_path)
 
@@ -36,13 +36,20 @@ class SonnetPredictor:
           self.rnnlm.pos_vocab[doc[0].pos_],
           self.rnnlm.suffix_vocab[doc[0].text[-2:]],
           count_syllables(doc[0].text)]
+    else:
+      word, pos, suff, syll = token
+      token = [self.rnnlm.word_vocab[word],
+          self.rnnlm.pos_vocab[pos],
+          self.rnnlm.suffix_vocab[suff],
+          syll]
 
+    print(self.state)
     self.state, probs = self.rnnlm.add_input(self.state, token)
     prob_values = probs.value()
     topks = numpy.argsort(prob_values)[-10:]
 
     print([self.rnnlm.word_vocab[x] for x in topks])
-    return topks
+    return [self.rnnlm.word_vocab[x] for x in topks]
 
   def new_poem(self):
     self.quatrain_index = 0

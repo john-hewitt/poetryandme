@@ -10,6 +10,7 @@ model_path = "../model.pt"
 vocab_path = "../vocabs.json"
 sp = SonnetPredictor(model_path, vocab_path)
 
+
 current_sonnet = ""
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
@@ -22,7 +23,9 @@ app.config['DEBUG'] = True
 def main():
 	global current_sonnet
 	current_sonnet = ""
+	global sp
 	sp = SonnetPredictor(model_path, vocab_path)
+	sp.new_poem()
 	return render_template('main.html')
 
 @app.route('/api/newquatrain', methods=['POST'])
@@ -41,7 +44,7 @@ def get_suggestions():
 def getSuggestions(word):
 	global current_sonnet
 	if word == "\n":
-		current_sonnet = current_sonnet + " EOS"
+		pass
 	else:
 		current_sonnet = current_sonnet + " " + word;
 
