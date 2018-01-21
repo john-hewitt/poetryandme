@@ -1,6 +1,11 @@
+import sys
 import spacy
 import json
+import penn_syllables
 
+sys.path.append('English_to_IPA/src/')
+import conversion
+import stress
 import syllables
 
 nlp = spacy.load('en_core_web_sm')
@@ -35,7 +40,7 @@ def CountSyllables(word_tuples):
     for word_tuple in word_tuples:
         if word_tuple.text != 'EOS':
             if word_tuple.text.isalpha():
-                word_tuple.syllables = syllables.count_syllables(word_tuple.text)
+                word_tuple.syllables = penn_syllables.count_syllables(word_tuple.text)
             else:
                 word_tuple.syllables = 0
 
@@ -43,7 +48,9 @@ def CountSyllables(word_tuples):
 def FindPhonics(word_tuples):
     for word_tuple in word_tuples:
         if word_tuple.text != 'EOS':
-            word_tuple.phonics = word_tuple.text[-2:]
+            ipa_last_word = conversion.ipa_list(word_tuple.text)[-1]
+            ipa_suffix = ipa_last_word[-1]
+            word_tuple.phonics = ipa_suffix[:-3]
 
 #output in json
 def CreateTrainingData(word_tuples):
