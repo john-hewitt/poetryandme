@@ -29,7 +29,17 @@ app.config['DEBUG'] = True
 @app.route('/')
 def main():
 	global current_sonnet
+	global line_inx
+	global line_endings
+	global line_values
+	global last_word
+	global curr_quatrain
+	line_endings = {}
+	line_values = {1: []}
+	line_inx = 1
+	curr_quatrain = 1
 	current_sonnet = ""
+	last_word = ""
 	global sp
 	sp = SonnetPredictor(model_path, vocab_path)
 	sp.new_poem()
