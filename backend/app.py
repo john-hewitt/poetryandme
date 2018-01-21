@@ -4,7 +4,12 @@ import spacy
 import sys
 
 sys.path.append("../scripts")
-from syllables import count_syllables
+sys.path.append("../scripts/English_to_IPA'/src/")
+from penn_syllables import count_syllables
+
+import conversion
+import stress
+import syllables
 
 model_path = "../model.pt"
 vocab_path = "../vocabs.json"
@@ -53,6 +58,8 @@ def getSuggestions(word):
 
 	token = last_token.text
 	pos_tag = last_token.pos_
-	suffix = token[-2:]
+	ipa_last_word = conversion.ipa_list(token)[-1]
+	ipa_suffix = ipa_last_word[-1]
+	suffix = ipa_suffix[:-3]
 	num_syllables = count_syllables(token)
 	return sp.add_word((token.lower(), pos_tag, suffix, num_syllables));
