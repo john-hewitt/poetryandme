@@ -6,8 +6,8 @@ import sys
 sys.path.append("../scripts")
 from syllables import count_syllables
 
-model_path = "model path here"
-vocab_path = "vocab path here"
+model_path = "../model.pt"
+vocab_path = "../vocabs.json"
 sp = SonnetPredictor(model_path, vocab_path)
 
 current_sonnet = ""
@@ -20,15 +20,16 @@ app.config['DEBUG'] = True
 
 @app.route('/')
 def main():
+	global current_sonnet
 	current_sonnet = ""
 	sp = SonnetPredictor(model_path, vocab_path)
 	return render_template('main.html')
 
 @app.route('/api/newquatrain', methods=['POST'])
 def new_quatrain():
+	global current_sonnet
 	sp.new_quatrain()
 	current_sonnet = ""
-
 
 @app.route('/api/getsuggestions', methods=['POST'])
 def get_suggestions():
@@ -38,6 +39,7 @@ def get_suggestions():
 
 # this will be the backend call
 def getSuggestions(word):
+	global current_sonnet
 	if word == "\n":
 		current_sonnet = current_sonnet + " EOS"
 	else:

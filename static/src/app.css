@@ -1,0 +1,43 @@
+.app{
+	text-align: center;
+	padding: 20px 15%;
+	font-family: 'Open Sans', sans-serif;
+}
+
+h1{
+	width: 100%;
+}
+
+.inputContainer{
+	text-align: left;
+	width: 100%;
+	padding: 10px 0px;
+}
+
+.inputForm{
+	width: calc(100% - 40px);
+	height: 1em;
+	border: none;
+	border-bottom: 1px solid #ffe79b;
+	font-size: 16px;
+	padding: 10px;
+}
+
+.inputForm:focus{
+	outline: none;
+	border: none;
+	border-bottom: 1px solid #efb326;
+	padding: none;
+	margin: none;
+}
+
+.completeRow {
+	font-size: 16px;
+	padding: 0px 10px;
+}
+
+.suggestionContainer{
+	margin: 10px auto;
+	display: flex;
+	flex-wrap: wrap;
+}

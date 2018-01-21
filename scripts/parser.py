@@ -23,6 +23,8 @@ def FindPartOfSpeech(text, nlp):
     nlp_tokens = nlp(text)
     tokens = [WordTuple(x.text, x.pos_) for x in nlp_tokens]
     for token in tokens:
+        if token.text == '\n':
+            tokens.remove(token)
         if token.text == 'EOS':
             token.part_of_speech = 'SYM'
 
