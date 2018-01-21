@@ -49,6 +49,15 @@ def get_suggestions():
 	suggestions = getSuggestions(word)
 	return jsonify({'suggestions': suggestions})
 
+@app.route('/api/deleteword', methods=['POST'])
+def delete_word():
+	global current_sonnet
+	global last_word
+	sp.delete_word()
+	lastSpaceIndex = current_sonnet.rfind(" ")
+	current_sonnet = current_sonnet[:lastSpaceIndex]
+	last_word = current_sonnet[current_sonnet.rfind(" ") + 1:]
+
 def suggestion_contains_newline(suggestions):
 	return "eos" in suggestions or "<quatrain/>" in suggestions
 
