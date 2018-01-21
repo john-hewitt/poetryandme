@@ -86,7 +86,8 @@ export default class InputContainer extends React.Component {
             });
         } else if (this.isNum(e.key)) {
             var filteredSuggestions = this.state.suggestions.filter(
-                suggestion => suggestion.indexOf(this.state.currentWord) == 0
+                suggestion => suggestion.indexOf(this.state.currentWord) == 0 &&
+                    suggestion != "</quatrain>"
             )
             if (parseInt(e.key) > 0 && parseInt(e.key) <= filteredSuggestions.length) {
                 this.chooseSuggestion({suggestion: filteredSuggestions[parseInt(e.key) - 1]})
@@ -104,7 +105,6 @@ export default class InputContainer extends React.Component {
     }
 
     getSuggestions(word){
-        console.log(word);
         $.post('/api/getsuggestions', {word: word}, res => {
             this.setState({
                 suggestions: res['suggestions']
@@ -113,18 +113,22 @@ export default class InputContainer extends React.Component {
     }
 
     chooseSuggestion(suggestion){
-        this.getSuggestions(suggestion["suggestion"]);
-        var currentLine = this.state.currentLine;
-        var currWordLength = this.state.currentWord.length;
-        if(currWordLength != 0){
-            currentLine = currentLine.slice(0, -currWordLength);
+        if(suggestion["suggestion"] == "eos"){
+            this.handleInput({key: "Enter"});
+        } else {
+            this.getSuggestions(suggestion["suggestion"]);
+            var currentLine = this.state.currentLine;
+            var currWordLength = this.state.currentWord.length;
+            if(currWordLength != 0){
+                currentLine = currentLine.slice(0, -currWordLength);
+            }
+            currentLine += suggestion["suggestion"] + ' '
+            this.setState({
+                currentWord: "",
+                currentLine: currentLine
+            })
+            $(".inputForm").focus();
         }
-        currentLine += suggestion["suggestion"] + ' '
-        this.setState({
-            currentWord: "",
-            currentLine: currentLine
-        })
-        $(".inputForm").focus();
     }
 
     render(){

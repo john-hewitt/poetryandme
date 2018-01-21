@@ -40,7 +40,7 @@ export default class SuggestionContainer extends React.Component {
 	                    	<Avatar backgroundColor={blue500}>
 	                    		{index == 9 ? 0 : index + 1}
 	                    	</Avatar>
-	                    	{suggestion}
+	                    	{suggestion == "eos" ? "New line" : suggestion}
 	                    </Chip>
 	                  )
                 })}
