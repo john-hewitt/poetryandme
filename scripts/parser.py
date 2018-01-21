@@ -59,10 +59,10 @@ def CreateTrainingData(word_tuples):
 
 #write to disk
 def WriteJsonToDisk(data):
-    with open("../data/training_data2.json", "w") as f:
+    with open("../data/training_data3.json", "w") as f:
         f.write(data)
 
-with open("../data/test.qtr") as f:
+with open("../data/test2.qtr") as f:
     data = ""
     for line in f.readlines():
         #check for new sonnet

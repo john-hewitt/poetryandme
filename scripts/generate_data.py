@@ -14,6 +14,54 @@ import time
 #     if pos_tag == "NOUN" or pos_tag == "VERB" or pos_tag == "ADJ":
 #         dct_pos[pos_tag].append(text);
 
+def better_random_sonnet(dct_pos):
+    random_noun = random.choice(dct_pos["NOUN"]);
+    api_post = "vivaldi.isi.edu"
+    port = "8080"
+    eng_data = {
+        "topic":random_noun,
+        "k":1,
+        "model":"0",
+        "id":9957,
+        "nline":"14",
+        "encourage_words":"",
+        "disencourage_words":"",
+        "enc_weight":"5",
+        "cword":"-5",
+        "reps":"0",
+        "allit":"0",
+        "wordlen":"0",
+        "topical":"1",
+        "mono":"-5",
+        "sentiment":"0",
+        "concrete":"0",
+        "is_default":1,
+        "source":"advance"
+    };
+    print("TOPIC: " + eng_data["topic"])
+    url = "http://" + api_post + ":" + port + "/api/poem_check"
+    params = urllib.parse.urlencode(eng_data)
+    response = json.loads(urlopen(url + "?" + params).read().decode("utf-8"))
+    poem = response["poem"]
+
+    parsed_output = poem.split("<br//>")
+    num_values = 0
+    string = ""
+
+    for item in parsed_output:
+        if num_values == 4:
+            num_values = 0
+            string = string[:-5]
+            string += "\n"
+
+        if item:
+            string = string + item.strip() + " EOS "
+            num_values += 1;
+
+    string = string[:-5]
+    return string
+
+
 def random_sonnet(dct_pos):
     form_data = {
         "type": 4,
@@ -91,12 +139,22 @@ with open("../data/training_data.json") as f:
                 if pos_tag == "NOUN" or pos_tag == "VERB" or pos_tag == "ADJ":
                     dct_pos[pos_tag].append(text);
 
-with open("test.qtr", "a") as f:
-    for i in range(2000):
-        #print("getting random sonnet")
+# with open("test.qtr", "a") as f:
+#     for i in range(2000):
+#         #print("getting random sonnet")
+#         print(i)
+#         sonnet = random_sonnet(dct_pos)
+#         #print(sonnet)
+#         f.write(sonnet);
+#         f.write("\n");
+#         f.write("\n");
+#         time.sleep(0.5)
+
+poem = better_random_sonnet(dct_pos)
+with open("test2.qtr", "a") as f:
+    for i in range(100):
         print(i)
-        sonnet = random_sonnet(dct_pos)
-        #print(sonnet)
+        sonnet = better_random_sonnet(dct_pos)
         f.write(sonnet);
         f.write("\n");
         f.write("\n");
