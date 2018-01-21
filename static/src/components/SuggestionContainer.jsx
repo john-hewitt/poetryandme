@@ -23,7 +23,8 @@ export default class SuggestionContainer extends React.Component {
 
 	render(){
 		var suggestions = this.props.suggestions.filter(suggestion => 
-			suggestion.indexOf(this.props.currentWord) == 0
+			suggestion.indexOf(this.props.currentWord) == 0 &&
+			suggestion != "</quatrain>"
 		);
 		return(
 			<div className="suggestionContainer">
