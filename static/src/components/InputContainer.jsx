@@ -13,6 +13,7 @@ export default class InputContainer extends React.Component {
         super(props);
         this.state = {
             suggestions: [],
+            hasRhymes: false,
             setLines: [],
             currentWord: "",
             currentLine: "",
@@ -21,8 +22,10 @@ export default class InputContainer extends React.Component {
     }
 
     reset(){
+        $.post('/')
         this.setState({
             suggestions: [],
+            hasRhymes: false,
             setLines: [],
             currentWord: "",
             currentLine: "",
@@ -87,6 +90,7 @@ export default class InputContainer extends React.Component {
                 });
             } else {
                 if(this.state.deleting){
+                    this.handleDeleteWord()
                     this.setState({
                         currentWord: "",
                         currentLine: currLine.slice(0, currLine.lastIndexOf(" ", currLine.lastIndexOf(" ") - 1) + 1),
@@ -131,10 +135,20 @@ export default class InputContainer extends React.Component {
         console.log('Current line: ' + this.state.currentLine)
     }
 
+    handleDeleteWord(){
+         $.post('/api/deleteword', res => {
+            this.setState({
+                suggestions: res['suggestions'],
+                hasRhymes: res['hasRhymes']
+            })
+        })
+    }
+
     getSuggestions(word){
         $.post('/api/getsuggestions', {word: word}, res => {
             this.setState({
-                suggestions: res['suggestions']
+                suggestions: res['suggestions'],
+                hasRhymes: res['hasRhymes']
             })
         })
     }
@@ -169,6 +183,7 @@ export default class InputContainer extends React.Component {
                          <SuggestionContainer
                          currentWord={this.state.currentWord}
                          suggestions={this.state.suggestions}
+                         hasRhymes={this.state.hasRhymes}
                          chooseSuggestion={this.chooseSuggestion.bind(this)}
                          /> 
                     }

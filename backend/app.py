@@ -26,7 +26,7 @@ nlp = spacy.load('en')
 
 app.config['DEBUG'] = True
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def main():
 	global current_sonnet
 	global line_inx
@@ -114,7 +114,7 @@ def getSuggestions(word):
 	total_syllables_line = sum([count_syllables(x) for x in line_values[line_inx]])
 
 	if suggestion_contains_newline(suggestions) or total_syllables_line > 6:
-		if line_inx - 2 in line_endings
+		if line_inx - 2 in line_endings:
 			return ["eos"] + suggestions[:4] + p.rhymes(line_endings[line_inx - 2])[:5], True
 		elif line_inx - 1 in line_endings and curr_quatrain == 4:
 			return ["eos"] + suggestions[:4] + p.rhymes(line_endings[line_inx - 1])[:5], True
