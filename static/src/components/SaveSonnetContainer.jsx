@@ -23,12 +23,6 @@ export default class SaveSonnetContainer extends React.Component{
 			<div className="saveSonnetContainer">
 				<h1>Congrats you wrote a sonnet</h1>
 				<RaisedButton
-				 label="Save Sonnet"
-				 backgroundColor={green300}
-				 labelColor={white}
-				 style={this.styles.button}>
-				</RaisedButton>
-				<RaisedButton
 				 label="New Sonnet"
 				 backgroundColor={blue300}
 				 labelColor={white}

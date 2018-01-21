@@ -13,6 +13,7 @@ export default class InputContainer extends React.Component {
         super(props);
         this.state = {
             suggestions: [],
+            hasRhymes: false,
             setLines: [],
             currentWord: "",
             currentLine: "",
@@ -21,17 +22,20 @@ export default class InputContainer extends React.Component {
     }
 
     reset(){
+        $.post('/')
         this.setState({
             suggestions: [],
+            hasRhymes: false,
             setLines: [],
             currentWord: "",
             currentLine: "",
+            deleting: false,
             sonnetComplete: false
         }, () => { $(".inputForm").focus();})
     }
 
     isValidLetter(char) {
-        return char.length == 1 && char.match(/[a-z.,?!\"\'\[\]\{\}/]/i);
+        return char.length == 1 && char.match(/[a-z.,?:;-_`~#$!\"\'\[\]\{\}/]/i);
     }
 
     isNum(char) {
@@ -72,11 +76,40 @@ export default class InputContainer extends React.Component {
                     currentLine: ""
                 });
             }
+            this.getSuggestions("\n");
         } else if (e.key == "Backspace") {
-            this.setState({
-                currentWord: this.state.currentWord.slice(0, -1),
-                currentLine: this.state.currentLine.slice(0, -1)
-            })
+            var currLine = this.state.currentLine;
+            if(currLine.length == 0){
+                return
+            }
+            if(currLine.slice(-1) != " "){
+                this.setState({
+                    currentWord: this.state.currentWord.slice(0, -1),
+                    currentLine: currLine.slice(0, -1),
+                    deleting: false
+                });
+            } else {
+                if(this.state.deleting){
+                    this.handleDeleteWord()
+                    this.setState({
+                        currentWord: "",
+                        currentLine: currLine.slice(0, currLine.lastIndexOf(" ", currLine.lastIndexOf(" ") - 1) + 1),
+                        deleting: false
+                    });
+                } else {
+                    this.setState({
+                        deleting: true
+                    }, () => {
+                        var inputForm = $(".inputForm")[0];
+                        var deleteFrom = currLine.lastIndexOf(" ", currLine.lastIndexOf(" ") - 1);
+                        deleteFrom = deleteFrom > -1 ? deleteFrom : 0;
+                        setTimeout(() => {
+                            inputForm.setSelectionRange(deleteFrom, currLine.length - 1);
+                            inputForm.focus();
+                        }, 0);
+                    })
+                }
+            }
         } else if (e.key == " ") {
             this.getSuggestions(this.state.currentWord);
             this.setState({
@@ -84,40 +117,59 @@ export default class InputContainer extends React.Component {
                 currentWord: ""
             });
         } else if (this.isNum(e.key)) {
-            if(parseInt(e.key) > 0 && parseInt(e.key) <= this.state.suggestions.length)
-            this.chooseSuggestion({suggestion: this.state.suggestions[parseInt(e.key) - 1]})
+            var filteredSuggestions = this.state.suggestions.filter(
+                suggestion => suggestion.indexOf(this.state.currentWord) == 0
+            )
+            if (parseInt(e.key) > 0 && parseInt(e.key) <= filteredSuggestions.length) {
+                this.chooseSuggestion({suggestion: filteredSuggestions[parseInt(e.key) - 1]})
+            } else if (parseInt(e.key) == 0 && filteredSuggestions.length > 9){
+                this.chooseSuggestion({suggestion: filteredSuggestions[9]})
+            }
         } else if (this.isValidLetter(e.key)) {
             this.setState({
                 currentLine: this.state.currentLine + e.key,
                 currentWord: this.state.currentWord + e.key
             });
         } 
-        console.log('Current word: ' + this.state.currentWord);
-        console.log('Current line: ' + this.state.currentLine)
+        // console.log('Current word: ' + this.state.currentWord);
+        // console.log('Current line: ' + this.state.currentLine)
+    }
+
+    handleDeleteWord(){
+         $.post('/api/deleteword', res => {
+            this.setState({
+                suggestions: res['suggestions'],
+                hasRhymes: res['hasRhymes']
+            })
+        })
     }
 
     getSuggestions(word){
-        console.log(word);
         $.post('/api/getsuggestions', {word: word}, res => {
             this.setState({
-                suggestions: res['suggestions']
+                suggestions: res['suggestions'],
+                hasRhymes: res['hasRhymes']
             })
         })
     }
 
     chooseSuggestion(suggestion){
-        this.getSuggestions(suggestion["suggestion"]);
-        var currentLine = this.state.currentLine;
-        var currWordLength = this.state.currentWord.length;
-        if(currWordLength != 0){
-            currentLine = currentLine.slice(0, -currWordLength);
+        if(suggestion["suggestion"] == "eos" || suggestion["suggestion"] == "</quatrain>"){
+            this.handleInput({key: "Enter"});
+        } else {
+            this.getSuggestions(suggestion["suggestion"]);
+            var currentLine = this.state.currentLine;
+            var currWordLength = this.state.currentWord.length;
+            if(currWordLength != 0){
+                currentLine = currentLine.slice(0, -currWordLength);
+            }
+            currentLine += suggestion["suggestion"] + ' '
+            this.setState({
+                currentWord: "",
+                currentLine: currentLine
+            })
+            $(".inputForm").focus();
         }
-        currentLine += suggestion["suggestion"] + ' '
-        this.setState({
-            currentWord: "",
-            currentLine: currentLine
-        })
-        $(".inputForm").focus();
     }
 
     render(){
@@ -131,6 +183,7 @@ export default class InputContainer extends React.Component {
                          <SuggestionContainer
                          currentWord={this.state.currentWord}
                          suggestions={this.state.suggestions}
+                         hasRhymes={this.state.hasRhymes}
                          chooseSuggestion={this.chooseSuggestion.bind(this)}
                          /> 
                     }
