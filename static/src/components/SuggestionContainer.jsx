@@ -14,9 +14,6 @@ export default class SuggestionContainer extends React.Component {
 
 	constructor(props) {
 		super(props);
-		// this.state = {
-		// 	suggestions: this.props.suggestions
-		// }
 		this.styles = {
 			chip:{
 				margin: 4
@@ -25,18 +22,26 @@ export default class SuggestionContainer extends React.Component {
 	}
 
 	render(){
-		var suggestions = this.props.suggestions;
+		var suggestions = this.props.suggestions.filter(suggestion => 
+			suggestion.indexOf(this.props.currentWord) == 0
+		);
 		return(
 			<div className="suggestionContainer">
 				{suggestions.map((suggestion, index) => {
-                  return (
-                    <Chip key={uuidv1()} style={this.styles.chip} backgroundColor={blue300} labelColor="white">
-                    	<Avatar backgroundColor={blue500}>
-                    		{index + 1}
-                    	</Avatar>
-                    	{suggestion}
-                    </Chip>
-                  )
+						return (
+	                    <Chip 
+	                    	key={uuidv1()}
+	                    	style={this.styles.chip} 
+	                    	backgroundColor={blue300} 
+	                    	labelColor="white"
+	                    	onClick={e => {this.props.chooseSuggestion({suggestion})}}
+	                    >
+	                    	<Avatar backgroundColor={blue500}>
+	                    		{index + 1}
+	                    	</Avatar>
+	                    	{suggestion}
+	                    </Chip>
+	                  )
                 })}
 			</div>
 		)

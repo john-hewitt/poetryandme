@@ -5,24 +5,20 @@
 }
 
 h1{
-	/*border: 1px solid blue;*/
 	width: 100%;
 }
 
 .inputContainer{
-	/*border: 1px solid red;*/
+	text-align: left;
 	width: 100%;
 	padding: 10px 0px;
 }
 
 .inputForm{
-	text-align: center;
 	width: calc(100% - 40px);
 	height: 1em;
-	/*height: 10em;*/
 	resize: none;
 	border: none;
-	/*border-bottom: 1px solid none;*/
 	border-bottom: 1px solid #ffe79b;
 	font-size: 16px;
 	line-height: 32px;
@@ -30,7 +26,6 @@ h1{
 }
 
 .inputForm:focus{
-	/*outline: 1px solid #efb326;*/
 	outline: none;
 	border: none;
 	border-bottom: 1px solid #efb326;
@@ -39,6 +34,7 @@ h1{
 }
 
 .suggestionContainer{
+	margin: 10px auto;
 	display: flex;
 	flex-wrap: wrap;
 }

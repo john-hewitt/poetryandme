@@ -29,4 +29,4 @@ def getSuggestions(word):
 	# suffix = token[-2:];
 	# num_syllables = count_syllables(token);
 
-	return [word + '1', word + '2', word + '3']
+	return [word + 'x', word + 'xy', word + 'xyz']
