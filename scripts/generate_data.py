@@ -91,15 +91,16 @@ with open("../data/training_data.json") as f:
                 if pos_tag == "NOUN" or pos_tag == "VERB" or pos_tag == "ADJ":
                     dct_pos[pos_tag].append(text);
 
-with open("test.qtr", "w") as f:
-    for i in range(3):
-        print("getting random sonnet")
+with open("test.qtr", "a") as f:
+    for i in range(2000):
+        #print("getting random sonnet")
+        print(i)
         sonnet = random_sonnet(dct_pos)
         #print(sonnet)
         f.write(sonnet);
         f.write("\n");
         f.write("\n");
-        time.sleep(2)
+        time.sleep(0.5)
 
 
 
