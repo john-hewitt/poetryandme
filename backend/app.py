@@ -44,9 +44,10 @@ def get_suggestions():
 def getSuggestions(word):
 	global current_sonnet
 	if word == "\n":
-		pass
+		sp.new_quatrain()
+		current_sonnet += " eos"
 	else:
-		current_sonnet = current_sonnet + " " + word;
+		current_sonnet += " " + word;
 
 	tokens = nlp(current_sonnet)
 	last_token = tokens[len(tokens) - 1]

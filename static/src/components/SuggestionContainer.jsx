@@ -37,7 +37,7 @@ export default class SuggestionContainer extends React.Component {
 	                    	onClick={e => {this.props.chooseSuggestion({suggestion})}}
 	                    >
 	                    	<Avatar backgroundColor={blue500}>
-	                    		{index + 1}
+	                    		{index == 9 ? 0 : index + 1}
 	                    	</Avatar>
 	                    	{suggestion}
 	                    </Chip>

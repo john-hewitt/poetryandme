@@ -31,7 +31,7 @@ export default class InputContainer extends React.Component {
     }
 
     isValidLetter(char) {
-        return char.length == 1 && char.match(/[a-z.,?!\"\'\[\]\{\}/]/i);
+        return char.length == 1 && char.match(/[a-z.,?:;-_`~#$!\"\'\[\]\{\}/]/i);
     }
 
     isNum(char) {
@@ -72,6 +72,7 @@ export default class InputContainer extends React.Component {
                     currentLine: ""
                 });
             }
+            this.getSuggestions("\n");
         } else if (e.key == "Backspace") {
             this.setState({
                 currentWord: this.state.currentWord.slice(0, -1),
@@ -84,8 +85,14 @@ export default class InputContainer extends React.Component {
                 currentWord: ""
             });
         } else if (this.isNum(e.key)) {
-            if(parseInt(e.key) > 0 && parseInt(e.key) <= this.state.suggestions.length)
-            this.chooseSuggestion({suggestion: this.state.suggestions[parseInt(e.key) - 1]})
+            var filteredSuggestions = this.state.suggestions.filter(
+                suggestion => suggestion.indexOf(this.state.currentWord) == 0
+            )
+            if (parseInt(e.key) > 0 && parseInt(e.key) <= filteredSuggestions.length) {
+                this.chooseSuggestion({suggestion: filteredSuggestions[parseInt(e.key) - 1]})
+            } else if (parseInt(e.key) == 0 && filteredSuggestions.length > 9){
+                this.chooseSuggestion({suggestion: filteredSuggestions[9]})
+            }
         } else if (this.isValidLetter(e.key)) {
             this.setState({
                 currentLine: this.state.currentLine + e.key,
