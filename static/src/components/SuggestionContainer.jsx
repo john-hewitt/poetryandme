@@ -26,7 +26,6 @@ export default class SuggestionContainer extends React.Component {
 		var suggestions = this.props.suggestions.filter(suggestion => 
 			suggestion.indexOf(this.props.currentWord) == 0
 		);
-		console.log(this.props.hasRhymes)
 		if(this.props.hasRhymes){
 			var normalSuggestions = suggestions.slice(0, 5);
 			var rhymeSuggestions = suggestions.slice(5, suggestions.length);
