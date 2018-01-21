@@ -4,7 +4,7 @@ import dynet as dy
 from vocab import Vocab, FIRST_TOK, SECOND_TOK, THIRD_TOK, FOURTH_TOK, EOQ_TOK
 import sys
 import json
-from attender import EmptyAttender
+from attender import EmptyAttender, BilinearAttender
 import en_core_web_sm
 nlp = en_core_web_sm.load()
 import yaml
@@ -30,7 +30,7 @@ class RNNLM:
 
     self.rnn = dy.VanillaLSTMBuilder(1, self.total_input_size, self.RNN_HIDDEN_SIZE, pc)
 
-    self.attender = EmptyAttender()
+    self.attender = BilinearAttender(self.pc, self.RNN_HIDDEN_SIZE)
 
     self.word_vecs = self.pc.add_lookup_parameters((len(self.word_vocab), self.WORD_EMBED_SIZE))
     self.pos_vecs = self.pc.add_lookup_parameters((len(self.pos_vocab), self.POS_EMBED_SIZE))
@@ -53,6 +53,7 @@ class RNNLM:
 
   def generate(self, state):
     for last_tok in [FIRST_TOK, SECOND_TOK, THIRD_TOK, FOURTH_TOK]:
+      state = self.initialize()
       last_pos = last_tok
       last_suffix = last_tok
       syll_count = 0
@@ -60,26 +61,33 @@ class RNNLM:
       toks_so_far = []
       token = [self.word_vocab[last_tok], self.pos_vocab[last_tok], self.suffix_vocab[last_tok], syll_count]
       while last_tok != EOQ_TOK and len(toks_so_far) < 3*15 :
-        #print([last_tok, last_pos, last_suffix, syll_count])
         token = [self.word_vocab[last_tok], self.pos_vocab[last_pos], self.suffix_vocab[last_suffix], syll_count]
 
         state, probs = self.add_input(state, token)
         probs = probs.value()
         next_word_tok = self.word_vocab[probs.index(max(probs))]
 
-        string_so_far += next_word_tok + ' ' if next_word_tok != 'eos' else '\n'
+        #string_so_far += next_word_tok + ' ' if next_word_tok != 'eos' else '\n'
+        if next_word_tok == EOQ_TOK:
+          string_so_far += '\n\n'
+        elif next_word_tok == 'eos':
+          string_so_far += '\n'
+        else:
+          string_so_far += next_word_tok + ' '
         parsed_string = nlp(string_so_far)
         toks_so_far.append(next_word_tok)
         last_tok = next_word_tok
-        last_pos = parsed_string[-1].tag_
+        last_pos = parsed_string[-1].pos_
         last_suffix = parsed_string[-1].text[-2:]
         syll_count = count_syllables(last_tok)
-      print(string_so_far)
+      tqdm.write(string_so_far)
 
   def add_input(self, state, token):
     input_vec = self.get_concatenated_representation(token)
     hidden_state = state.add_input(input_vec)
-    prediction_vector = hidden_state.output()
+    #prediction_vector = hidden_state.output()
+    prediction_vector = self.attender.get_attention_state(hidden_state.output(), self.states_so_far)
+    self.states_so_far.append(hidden_state.output())
     b = dy.parameter(self.b)
     W = dy.parameter(self.W)
 
@@ -157,10 +165,12 @@ class RNNLMTrainer:
           loss.backward()
           self.trainer.update()
           losses = []
-
-        if (count + 1)% 4 == 0:
           dy.renew_cg()
           state = rnnlm.initialize()
+
+        #if (count + 1)% 4 == 0:
+        #  dy.renew_cg()
+        #  state = rnnlm.initialize()
 
       dev_loss = 0
       state = rnnlm.initialize()
@@ -172,7 +182,7 @@ class RNNLMTrainer:
         if (count + 1)% 4 == 0:
           dy.renew_cg()
           state = rnnlm.initialize()
-      print('Dev loss: {}'.format(dev_loss))
+      tqdm.write('Dev loss: {}'.format(dev_loss))
       if dev_loss < min_dev_loss:
         tqdm.write('Best dev loss. Saving parameters...')
         self.pc.save('model.pt')
@@ -196,4 +206,4 @@ if __name__ == '__main__':
   vocabs = model_trainer.get_vocabs(quatrains, args.vocabs_filepath)
   integerized_quatrains = model_trainer.integerize_quatrains(vocabs, quatrains)
   rnnlm = RNNLM(vocabs, pc)
-  model_trainer.train(rnnlm, integerized_quatrains[:-16], integerized_quatrains[-16:])
+  model_trainer.train(rnnlm, integerized_quatrains, integerized_quatrains[-16:])

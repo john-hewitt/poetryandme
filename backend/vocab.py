@@ -35,7 +35,6 @@ class Vocab:
   @staticmethod
   def vocabs_to_file(vocabs, filepath):
     word_vocab, pos_vocab, suffix_vocab = vocabs
-    print(word_vocab.int_to_sym)
     json.dump(
         [[word_vocab.sym_to_int, word_vocab.int_to_sym],
           [pos_vocab.sym_to_int, pos_vocab.int_to_sym],
