@@ -1,5 +1,5 @@
 import argparse
-from syllables import count_syllables
+from penn_syllables import count_syllables
 import dynet as dy
 from vocab import Vocab, FIRST_TOK, SECOND_TOK, THIRD_TOK, FOURTH_TOK, EOQ_TOK
 import sys
@@ -40,7 +40,9 @@ class RNNLM:
     self.b = self.pc.add_parameters((len(self.word_vocab)))
 
   def initialize(self):
+    dy.renew_cg()
     self.states_so_far = []
+    self.outputs_so_far = []
     return self.rnn.initial_state()
 
   def get_concatenated_representation(self, token):
@@ -86,13 +88,19 @@ class RNNLM:
     input_vec = self.get_concatenated_representation(token)
     hidden_state = state.add_input(input_vec)
     #prediction_vector = hidden_state.output()
-    prediction_vector = self.attender.get_attention_state(hidden_state.output(), self.states_so_far)
-    self.states_so_far.append(hidden_state.output())
+    prediction_vector = self.attender.get_attention_state(hidden_state.output(), self.outputs_so_far)
+    self.outputs_so_far.append(hidden_state.output())
+    self.states_so_far.append(hidden_state)
     b = dy.parameter(self.b)
     W = dy.parameter(self.W)
 
     probs = dy.softmax(dy.affine_transform([b, W, prediction_vector]))
     return hidden_state, probs
+
+  def delete_word(self):
+    self.outputs_so_far.pop()
+    self.states_so_far.pop()
+    return self.states_so_far[-1]
 
 class RNNLMTrainer:
 

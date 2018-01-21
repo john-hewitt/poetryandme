@@ -17,7 +17,7 @@ we can return either just the top result or every possible combination of result
 
 def cmu_words():
     """returns a dictionary of words from the CMU dictionary and their phonetic notation"""
-    cmu_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),  'resources\CMU_dict.txt'), 'r+')
+    cmu_file = open(os.path.join(os.path.abspath(os.path.dirname(__file__)),  'resources/CMU_dict.txt'), 'r+')
     words = []
     phonetics = []
     for line in cmu_file.readlines():
