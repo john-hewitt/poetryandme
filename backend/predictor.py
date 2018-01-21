@@ -61,9 +61,11 @@ class SonnetPredictor:
     self.state, probs = self.rnnlm.add_input(self.state,
         [self.rnnlm.word_vocab[quatrain_token], self.rnnlm.pos_vocab[quatrain_token],
           self.rnnlm.suffix_vocab[quatrain_token], 0])
+    self.quatrain_index = self.quatrain_index + 1 if self.quatrain_index < 3 else 0
 
   def delete_word(self):
-    pass
+    self.state = self.rnnlm.delete_word()
+
 
 if __name__ == '__main__':
   argp = argparse.ArgumentParser()
