@@ -26,7 +26,8 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "style-loader": "^0.19.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "react-md": "^1.2.11"
   },
   "babel": {
     "presets": [
@@ -35,6 +36,7 @@
     ]
   },
   "dependencies": {
-    "react-md": "^1.2.11"
+    "material-ui": "^0.20.0",
+    "uuid": "^3.2.1"
   }
 }

@@ -33,14 +33,13 @@ class SonnetPredictor:
     if isinstance(token, str):
       doc = nlp(token)
       token = [self.rnnlm.word_vocab[token], 
-          self.rnnlm.pos_vocab[doc[0].tag_],
+          self.rnnlm.pos_vocab[doc[0].pos_],
           self.rnnlm.suffix_vocab[doc[0].text[-2:]],
           count_syllables(doc[0].text)]
-      print(token)
 
     self.state, probs = self.rnnlm.add_input(self.state, token)
     prob_values = probs.value()
-    topks = numpy.argsort(prob_values)[:10]
+    topks = numpy.argsort(prob_values)[-10:]
 
     print([self.rnnlm.word_vocab[x] for x in topks])
     return topks
@@ -72,7 +71,7 @@ if __name__ == '__main__':
   while True:
     try:
       word = input().strip()
-      poem += ' ' + word
+      poem += ' ' + word if word != 'eos' else '\n' + word
       print()
       sp.add_word(word)
       print(poem)

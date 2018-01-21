@@ -2,29 +2,33 @@ import React from "react";
 import ReactDOM from "react-dom";
 import styles from "./app.css";
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import InputContainer from "./components/InputContainer.jsx";
 
+class MaterialWrapper extends React.Component{
+	render(){
+		return(
+			<MuiThemeProvider>
+				<App />
+			</MuiThemeProvider>
+		)
+	}
+}
 
 class App extends React.Component {
-	getSuggestions(word){
-		console.log(word);
-		$.post('/api/getsuggestions', {word: 'hello'}, function(suggestions){
-			console.log(suggestions);
-		})
-	}
 
 	render(){
 		return(
 			<div className="app">
 				<h1>Poetry and Me</h1>
-				<InputContainer getSuggestions={this.getSuggestions.bind(this)}/>
+				<InputContainer/>
 			</div>
 		)
 	}
 }
 
 ReactDOM.render(
-  <App/>,
+  <MaterialWrapper/>,
   document.getElementById('root')
 );
 

@@ -16,7 +16,7 @@ class WordTuple:
         self.part_of_speech = part_of_speech
         self.syllables = syllables
         self.phonics = phonics
-    
+
     def __repr__(self):
         return "%s <%s, %s, %d, %s>" % (self.__class__, self.text, self.part_of_speech, self.syllables, self.IPA)
 
@@ -59,10 +59,10 @@ def CreateTrainingData(word_tuples):
 
 #write to disk
 def WriteJsonToDisk(data):
-    with open("../data/training_data.json", "w") as f:
+    with open("../data/training_data2.json", "w") as f:
         f.write(data)
 
-with open("../data/sonnets.qtr") as f:
+with open("../data/test.qtr") as f:
     data = ""
     for line in f.readlines():
         #check for new sonnet
