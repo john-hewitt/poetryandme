@@ -131,8 +131,8 @@ export default class InputContainer extends React.Component {
                 currentWord: this.state.currentWord + e.key
             });
         } 
-        console.log('Current word: ' + this.state.currentWord);
-        console.log('Current line: ' + this.state.currentLine)
+        // console.log('Current word: ' + this.state.currentWord);
+        // console.log('Current line: ' + this.state.currentLine)
     }
 
     handleDeleteWord(){
